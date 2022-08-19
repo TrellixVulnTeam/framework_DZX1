@@ -1,0 +1,28 @@
+<script>
+    var results = {};
+
+    function run(url, cb) {
+        var target_window = open(url);
+        setTimeout(function () {
+            results[url] = target_window.opener === null;
+            cb();
+        }, 1000);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case30.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "coop_detected_for_coop": results["https://leak.test/custom/case30/main/"],
+            "coop_detected_for_non_coop": results["https://leak.test/"],
+            "xsleak_reproduced": results["https://leak.test/custom/case30/main/"] && !results["https://leak.test/"]
+        })));
+        xhr.send();
+    }
+
+    window.onload = function () {
+        run("https://leak.test/custom/case30/main/", function () {
+            run("https://leak.test/", report);
+        });
+    };
+</script>

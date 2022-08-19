@@ -1,0 +1,10 @@
+<iframe id="123" src="https://leak.test/custom/c633348/helper"></iframe>
+<script>
+    document.addEventListener("securitypolicyviolation", function (e) {
+        console.log("securitypolicyviolation_event.blockeduri=" + e.blockeduri);
+        alert(e.blockeduri);
+        if (false) {
+            document.location.href = "https://adition.com/report/?leak=c633306";
+        }
+    });
+</script>

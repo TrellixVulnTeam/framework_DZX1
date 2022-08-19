@@ -15,7 +15,7 @@ bci_mongo_username=[database_user]
 bci_mongo_password=[database_password]
 ```
 
-*Tip: if the Docker address pool interfeares with `ip_address_of_host`, modify `/etc/docker/daemon.json` (e.g. `{"default-address-pools":[
+*Tip: if the Docker address pool interferes with `ip_address_of_host`, modify `/etc/docker/daemon.json` (e.g. `{"default-address-pools":[
 {"base":"192.168.0.0/16","size":24}]}`).*
 
 

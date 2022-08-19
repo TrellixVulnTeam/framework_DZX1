@@ -1,0 +1,35 @@
+<script>
+    window.onload = function () {
+        var results = [];
+
+        function run(url, cb) {
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+            var counter = 0;
+            iframe.onload = function () {
+                counter++;
+                console.log("Load event was triggered", counter);
+            };
+            iframe.src = url;
+            setTimeout(function () {
+                results.push(counter);
+                cb();
+            }, 4000);
+        }
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case5.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "eight_redirects": results[0],
+                "sixteen_redirects": results[1],
+                "xsleak_reproduced": results[0] === 9 && results[1] === 17
+            })));
+            xhr.send();
+        }
+
+        run("https://leak.test/client_redirect/8/", function () {
+            run("https://leak.test/client_redirect/16/", report);
+        });
+    };
+</script>

