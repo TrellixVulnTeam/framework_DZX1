@@ -1,0 +1,32 @@
+<script>
+    var results = [];
+
+    function run(url, cb) {
+        window.onerror = function () {
+            console.log(url + ": not corped");
+            results.push(url);
+        };
+
+        var script = document.createElement("script");
+        document.body.appendChild(script);
+        script.src = url;
+        setTimeout(cb, 2000);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case20.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "corp_detected_for_no_corp": !results.includes("https://leak.test/just_json"),
+            "corp_detected_for_corp": !results.includes("https://leak.test/corped_json"),
+            "xsleak_reproduced": results.includes("https://leak.test/just_json") && !results.includes("https://leak.test/corped_json")
+        })));
+        xhr.send();
+    }
+
+    window.onload = function () {
+        run("https://leak.test/just_json", function () {
+            run("https://leak.test/corped_json", report);
+        });
+    };
+</script>

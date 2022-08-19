@@ -1,0 +1,2 @@
+https://leak.test/custom/sw_websocket/main
+https://adition.com/report/?leak=baseline

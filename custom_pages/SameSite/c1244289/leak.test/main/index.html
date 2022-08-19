@@ -1,0 +1,20 @@
+<script>
+    "use strict";
+
+    var url = "https://adition.com/report/?leak=c1244289";
+
+    navigator.serviceWorker.ready.then(async function (swReg) {
+        var request = new Request(url, { credentials: "include" });
+
+        var bgFetch = await swReg.backgroundFetch.fetch("test", [request]);
+
+        var targetPage = await bgFetch.match(url);
+        var response = await targetPage.responseReady;
+        console.log("Background Fetch:", (await response.text())); // contains cookie
+
+        // const normalFetch = await fetch(request);
+        // console.log("Fetch:", await normalFetch.text()); // no cookie
+    });
+
+    navigator.serviceWorker.register("sw");
+</script>

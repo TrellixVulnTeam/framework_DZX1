@@ -1,0 +1,1 @@
+var socket = new WebSocket('wss://adition.com/report/?leak=sw_websocket');

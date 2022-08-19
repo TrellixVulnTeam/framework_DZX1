@@ -1,0 +1,28 @@
+<script>
+    var results = [];
+    function run(url, cb) {
+        window.onerror = function () {
+            console.log(url + ": not corbed");
+            results.push(url);
+        };
+
+        var script = document.createElement("script");
+        document.body.appendChild(script);
+        script.src = url;
+        setTimeout(cb, 2000);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case19.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "corb_detected": !results.includes("https://leak.test/just_html"),
+            "xsleak_reproduced": !results.includes("https://leak.test/just_html")
+        })));
+        xhr.send();
+    }
+
+    window.onload = function () {
+        run("https://leak.test/just_html", report);
+    };
+</script>

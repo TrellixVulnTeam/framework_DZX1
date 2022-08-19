@@ -1,0 +1,17 @@
+<script>
+    /*
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://re.port/");
+    xhr.send(JSON.stringify({
+                "file_name": "test.json",
+                "report": {
+                    "user-agent": navigator.userAgent
+                }
+            }));
+            */
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://re.port/test.json/" + btoa(JSON.stringify({
+                    "user-agent": navigator.userAgent
+                })));
+    xhr.send();
+</script>

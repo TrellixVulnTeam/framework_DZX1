@@ -1,0 +1,32 @@
+<script>
+    var results = [];
+    function run(url, cb) {
+        fetch(url, {
+            credentials: "include",
+            redirect: "manual"
+        }).then(function () {
+            console.log("redirect");
+            results.push("redirect");
+            cb();
+        })["catch"](function () {
+            console.log("no redirect");
+            results.push("no_redirect");
+            cb();
+        });
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case12.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "no_redirect": results[0],
+            "redirect": results[1],
+            "xsleak_reproduced": results[0] === "no_redirect" && results[1] === "redirect"
+        })));
+        xhr.send();
+    }
+
+    run('https://leak.test/', function () {
+        run('https://leak.test/server_redirect/1/', report);
+    });
+</script>

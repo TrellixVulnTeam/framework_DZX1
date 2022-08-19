@@ -1,0 +1,6 @@
+[
+    {
+        "key": "Content-Security-Policy-Report-Only",
+        "value": "frame-src leak.test/; report-uri /test"
+    }
+]

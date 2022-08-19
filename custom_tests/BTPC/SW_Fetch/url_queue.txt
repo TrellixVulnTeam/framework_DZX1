@@ -1,0 +1,2 @@
+https://leak.test/custom/sw_fetch/main
+https://adition.com/report/?leak=baseline
